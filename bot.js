@@ -9,7 +9,7 @@ const {
 
 require('dotenv').config();
 
-const bot = new Telegraf(process.env.BOT_TOKEN);
+const bot = new Telegraf('1765277445:AAH__SJHCa9TFfKuENl3v3OfnZIVLHYT1KY');
 
 const VIP = {
   reply_markup: {
