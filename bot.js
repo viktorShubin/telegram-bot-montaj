@@ -7,6 +7,8 @@ const {
   Scenes,
 } = require('telegraf');
 
+const PORT = process.env.PORT || 5000;
+const express = require('express');
 require('dotenv').config();
 
 const bot = new Telegraf('1765277445:AAH__SJHCa9TFfKuENl3v3OfnZIVLHYT1KY');
@@ -98,3 +100,5 @@ bot.start((ctx) => {
 bot.hears('hi', (ctx) => ctx.reply('Hey there'));
 
 bot.launch();
+
+express().listen(PORT, () => console.log(`Listening on ${PORT}`));
