@@ -11,7 +11,7 @@ const PORT = process.env.PORT || 5000;
 const express = require('express');
 require('dotenv').config();
 
-const bot = new Telegraf('1765277445:AAH__SJHCa9TFfKuENl3v3OfnZIVLHYT1KY');
+const bot = new Telegraf(process.env.BOT_TOKEN);
 
 const VIP = {
   reply_markup: {
