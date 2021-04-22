@@ -90,11 +90,27 @@ const stage = new Stage([contactDataWizard]);
 bot.use(session());
 bot.use(stage.middleware());
 
-bot.start((ctx) => {
-  ctx.scene.enter('CONTACT_DATA_WIZARD_SCENE_ID');
-  let tta = ctx.update.message.chat.id;
-  bot.telegram.getChat(tta).then(console.log(tta));
-  console.log(ctx.message.from);
+// bot.start((ctx) => {
+//   ctx.reply(Markup.keyboard([['Старт']]).resize());
+//   ctx.scene.enter('CONTACT_DATA_WIZARD_SCENE_ID');
+//   let tta = ctx.update.message.chat.id;
+//   bot.telegram.getChat(tta).then(console.log(tta));
+//   console.log(ctx.message.from);
+// });
+
+bot.start((ctx) =>
+  ctx.reply(
+    `Привет ${ctx.message.from.first_name}`,
+    Markup.keyboard([['Старт']]).resize()
+  )
+);
+
+bot.on('text', (ctx) => {
+  let starting = ctx.message.text;
+
+  if (starting == 'Старт') {
+    ctx.scene.enter('CONTACT_DATA_WIZARD_SCENE_ID');
+  }
 });
 
 bot.hears('hi', (ctx) => ctx.reply('Hey there'));
