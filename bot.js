@@ -78,10 +78,12 @@ const contactDataWizard = new Scenes.WizardScene(
 
     chanelId = -1001160560461;
     let texForward = ctx.wizard.state.contactData.text;
+    let parse_mod = 'HTML';
     // ctx.reply(vipText);
     bot.telegram.sendMessage(
       chanelId,
-      ` Логин абонента: ${logAbon} \n Номер муфты: ${numberMufta} \n Номер паспорта: ${numberPass} \n Серийный номер ONU: ${OnuText} \n Акция ВИП на 12: ${VIPTEXT} \n Отправитель: @${nameOtpravitel}`
+      `<b>Логин абонента</b>: ${logAbon} \n<b>Номер муфты</b>: ${numberMufta} \n<b>Номер порта</b>: ${numberPass} \n<b>Серийный номер ONU</b>: ${OnuText} \n<b>Акция ВИП на 12</b>: ${VIPTEXT} \n<b>Отправитель</b>: @${nameOtpravitel}`,
+      { parse_mode: 'HTML' }
     );
     return ctx.scene.leave();
   }
