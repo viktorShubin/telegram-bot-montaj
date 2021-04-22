@@ -1,7 +1,12 @@
 {
+  "name": "application-name",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node bot.js"
+  },
   "dependencies": {
     "dotenv": "^8.2.0",
-    "telegraf": "^4.3.0",
-    "start": "node bot.js"
+    "telegraf": "^4.3.0"
   }
 }
