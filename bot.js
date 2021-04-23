@@ -138,6 +138,8 @@ const contactDataWizard = new Scenes.WizardScene(
     let texForward = ctx.wizard.state.contactData.text;
     let parse_mod = 'HTML';
     // ctx.reply(vipText);
+
+    ctx.reply('Информация добавлена');
     bot.telegram.sendMessage(
       chanelId,
       `<b>Логин абонента</b>: ${logAbon} \n<b>Номер муфты</b>: ${numberMufta} \n<b>Номер порта</b>: ${numberPass} \n<b>Серийный номер ONU</b>: ${OnuText} \n<b>Акция ВИП на 12</b>: ${VIPTEXT} \n<b>Отправитель</b>: @${nameOtpravitel}`,
