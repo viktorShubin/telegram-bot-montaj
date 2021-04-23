@@ -23,7 +23,9 @@ const VIP = {
     ],
   },
 };
-
+const re = new RegExp('^[a-zA-Z0-9]+$');
+const cifri = new RegExp('/^d{1,6}$/');
+const c = new RegExp(/^\d+$/);
 const contactDataWizard = new Scenes.WizardScene(
   'CONTACT_DATA_WIZARD_SCENE_ID', // first argument is Scene_ID, same as for BaseScene
   (ctx) => {
@@ -33,30 +35,86 @@ const contactDataWizard = new Scenes.WizardScene(
   },
   (ctx) => {
     // validation example
-    // if (ctx.message.text.length < 2) {
-    //   ctx.reply('Please enter name for real');
-    //   return;
-    // }
+    // let resLog = ctx.message.text;
+
+    if (ctx.message.text.length < 2) {
+      ctx.reply('Введите реальный логин');
+      return;
+    } else if (ctx.message.text == 'Старт') {
+      ctx.reply('не нажимайте Старт в данном поле!');
+      return;
+    } else if (!re.test(ctx.message.text)) {
+      ctx.reply(
+        'В логине должны быть только английские буквы и цифры (meg123)'
+      );
+      return;
+    }
     ctx.wizard.state.contactData.login_abontnta = ctx.message.text;
+    console.log(ctx.wizard.state.contactData.login_abontnta);
     ctx.reply('Номер муфты(номер выноса)');
     return ctx.wizard.next();
   },
   (ctx) => {
+    if (ctx.message.text.length > 6) {
+      ctx.reply('Слишком больше количество символов');
+      return;
+    } else if (!c.test(ctx.message.text)) {
+      ctx.reply('Вы должны указать только цифры');
+      return;
+    } else if (ctx.message.text == 'Старт') {
+      ctx.reply('не нажимайте Старт в данном поле!');
+      return;
+    }
+
     ctx.wizard.state.contactData.num_mufta = ctx.message.text;
     ctx.reply('номер порта(номер порта в выносе)');
     return ctx.wizard.next();
   },
   (ctx) => {
+    console.log(ctx.message.text);
+    if (ctx.message.text.length > 2) {
+      ctx.reply('Должно быть не больше двух символов');
+      return;
+    } else if (ctx.message.text > 32) {
+      ctx.reply('число должно быть в диапазоне от 1 до 32');
+      return;
+    } else if (!c.test(ctx.message.text)) {
+      ctx.reply('Вы должны указать только цифры');
+      return;
+    } else if (ctx.message.text == 'Старт') {
+      ctx.reply('не нажимайте Старт в данном поле!');
+      return;
+    }
     ctx.wizard.state.contactData.num_passport = ctx.message.text;
     ctx.reply('Серийный номер ONU');
     return ctx.wizard.next();
   },
   (ctx) => {
+    if (ctx.message.text.length < 4) {
+      ctx.reply('Должно быть не меньше четырех символов');
+      return;
+    } else if (!re.test(ctx.message.text)) {
+      ctx.reply('должны указаны быть только английские буквы и цифры');
+      return;
+    } else if (ctx.message.text == 'Старт') {
+      ctx.reply('не нажимайте Старт в данном поле!');
+      return;
+    }
     ctx.wizard.state.contactData.ser_num_ONU = ctx.message.text;
     ctx.reply('Акция ВИП на 12', VIP);
     return ctx.wizard.next();
   },
   async (ctx) => {
+    console.log(ctx.callbackQuery.data);
+    // if (ctx.callbackQuery.data < 1) {
+    //   ctx.reply('Должно быть не меньше четырех символов');
+    //   return;
+    // } else if (
+    //   ctx.callbackQuery.data !== 'yes' ||
+    //   ctx.callbackQuery.data !== 'not'
+    // ) {
+    //   ctx.reply('Выберите кнопочный вариант ответа');
+    // }
     ctx.wizard.state.contactData.vip = ctx.callbackQuery.data;
 
     console.log(ctx.wizard.state.contactData);
