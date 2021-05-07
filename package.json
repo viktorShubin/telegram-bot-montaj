@@ -6,6 +6,8 @@
   "dependencies": {
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "fetch": "^1.1.0",
+    "node-cron": "^3.0.0",
     "telegraf": "^4.3.0"
   }
 }

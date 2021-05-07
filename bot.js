@@ -6,10 +6,14 @@ const {
   Markup,
   Scenes,
 } = require('telegraf');
+const fetch = require('node-fetch');
+const cron = require('node-cron');
 
 const PORT = process.env.PORT || 5000;
 const express = require('express');
 require('dotenv').config();
+
+// globals
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
@@ -23,6 +27,7 @@ const VIP = {
     ],
   },
 };
+
 const re = new RegExp('^[a-zA-Z0-9]+$');
 const cifri = new RegExp('/^d{1,6}$/');
 const c = new RegExp(/^\d+$/);
@@ -49,12 +54,17 @@ const contactDataWizard = new Scenes.WizardScene(
       );
       return;
     }
+    console.log(ctx.wizard.cursor);
     ctx.wizard.state.contactData.login_abontnta = ctx.message.text;
     console.log(ctx.wizard.state.contactData.login_abontnta);
     ctx.reply('Номер муфты(номер выноса)');
     return ctx.wizard.next();
   },
   (ctx) => {
+    if (ctx.message.text == '<') {
+      ctx.reply('Логин абонента');
+      return ctx.wizard.back();
+    }
     if (ctx.message.text.length > 6) {
       ctx.reply('Слишком больше количество символов');
       return;
@@ -66,12 +76,17 @@ const contactDataWizard = new Scenes.WizardScene(
       return;
     }
 
-    ctx.wizard.state.contactData.num_mufta = ctx.message.text;
     ctx.reply('номер порта(номер порта в выносе)');
+    ctx.wizard.state.contactData.num_mufta = ctx.message.text;
+    // ctx.reply(ctx.message.text);
     return ctx.wizard.next();
   },
   (ctx) => {
     console.log(ctx.message.text);
+    if (ctx.message.text == '<') {
+      ctx.reply('Номер муфты(номер выноса)');
+      return ctx.wizard.back();
+    }
     if (ctx.message.text.length > 2) {
       ctx.reply('Должно быть не больше двух символов');
       return;
@@ -100,12 +115,15 @@ const contactDataWizard = new Scenes.WizardScene(
       ctx.reply('не нажимайте Старт в данном поле!');
       return;
     }
+
+    ctx.wizard.state.contactData.hzz = ctx.message.text;
     ctx.wizard.state.contactData.ser_num_ONU = ctx.message.text;
     ctx.reply('Акция ВИП на 12', VIP);
     return ctx.wizard.next();
   },
   async (ctx) => {
-    console.log(ctx.callbackQuery.data);
+    let VIPTEXT;
+    // console.log(ctx.callbackQuery.data);
     // if (ctx.callbackQuery.data < 1) {
     //   ctx.reply('Должно быть не меньше четырех символов');
     //   return;
@@ -115,8 +133,19 @@ const contactDataWizard = new Scenes.WizardScene(
     // ) {
     //   ctx.reply('Выберите кнопочный вариант ответа');
     // }
-    ctx.wizard.state.contactData.vip = ctx.callbackQuery.data;
 
+    if (ctx.callbackQuery == undefined) {
+      ctx.reply('Серийный номер ONU');
+      return ctx.wizard.back();
+    } else {
+      ctx.reply('dsa');
+      console.log(ctx.callbackQuery.data);
+      colldata = ctx.callbackQuery.data;
+      VIPTEXT = colldata;
+    }
+
+    // if (ctx.message.text == '<') {
+    // }
     console.log(ctx.wizard.state.contactData);
     // ctx.reply(ctx.wizard.state.contactData).then((data) => {
     //   chatId = data.chat.id;
@@ -129,7 +158,7 @@ const contactDataWizard = new Scenes.WizardScene(
     let numberMufta = ctx.wizard.state.contactData.num_mufta;
     let numberPass = ctx.wizard.state.contactData.num_passport;
     let OnuText = ctx.wizard.state.contactData.ser_num_ONU;
-    let VIPTEXT = ctx.wizard.state.contactData.vip;
+
     let nameOtpravitel = ctx.callbackQuery.from.username;
 
     // ctx.wizard.state.contactData.login_abontnta;
@@ -140,11 +169,16 @@ const contactDataWizard = new Scenes.WizardScene(
     // ctx.reply(vipText);
 
     ctx.reply('Информация добавлена');
-    bot.telegram.sendMessage(
-      chanelId,
+    ctx.reply(
       `<b>Логин абонента</b>: ${logAbon} \n<b>Номер муфты</b>: ${numberMufta} \n<b>Номер порта</b>: ${numberPass} \n<b>Серийный номер ONU</b>: ${OnuText} \n<b>Акция ВИП на 12</b>: ${VIPTEXT} \n<b>Отправитель</b>: @${nameOtpravitel}`,
       { parse_mode: 'HTML' }
     );
+    // bot.telegram.sendMessage(
+    //   chanelId,
+    //   `<b>Логин абонента</b>: ${logAbon} \n<b>Номер муфты</b>: ${numberMufta} \n<b>Номер порта</b>: ${numberPass} \n<b>Серийный номер ONU</b>: ${OnuText} \n<b>Акция ВИП на 12</b>: ${VIPTEXT} \n<b>Отправитель</b>: @${nameOtpravitel}`,
+    //   { parse_mode: 'HTML' }
+    // );
+
     return ctx.scene.leave();
   }
 );
@@ -163,7 +197,7 @@ bot.use(stage.middleware());
 bot.start((ctx) =>
   ctx.reply(
     `Привет ${ctx.message.from.first_name}`,
-    Markup.keyboard([['Старт']]).resize()
+    Markup.keyboard(['<', 'Старт']).resize()
   )
 );
 
